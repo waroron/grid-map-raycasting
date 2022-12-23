@@ -6,35 +6,42 @@ C++ component including Python bindings to raycast a gridmap from a viewpoint to
 
 **On Unix (Linux, OS X)**
 
-* A compiler with C++11 support
-* CMake >= 3.12
-* Ninja or Pip 10+
+- A compiler with C++11 support
+- CMake >= 3.12
+- Ninja or Pip 10+
 
 **On Windows**
 
-* Visual Studio 2015 or newer (required for all Python versions, see notes below)
-* CMake >= 3.12 (3.8 was the first version to support VS 2015) or Pip 10+
+- Visual Studio 2015 or newer (required for all Python versions, see notes below)
+- CMake >= 3.12 (3.8 was the first version to support VS 2015) or Pip 10+
 
 ## Installation
+
 Please install the following C++ dependencies to use this repo:
 
 ```bash
 conda install cmake pybind11 eigen
 ```
+
 or alternatively on macOS with homebrew:
+
 ```bash
 brew install cmake pybind11 eigen
 ```
+
 or on Ubuntu with:
+
 ```bash
-sudo apt install cmake python-pybind11 libeigen3-dev
+sudo apt install cmake python3-pybind11 libeigen3-dev
 ```
 
 With the `setup.py` file included in this example, the `pip install` command will
 invoke CMake and build the pybind11 module as specified in `CMakeLists.txt`.
 
 ## Usage
+
 Please refer to the following sample code:
+
 ```python
 import grid_map_raycasting as m
 import faulthandler; faulthandler.enable()
@@ -81,5 +88,3 @@ The Visual C++ 2015 redistributable packages are a runtime requirement for this
 project. It can be found [here][vs2015_runtime]. If you use the Anaconda Python
 distribution, you can add `vs2015_runtime` as a platform-dependent runtime
 requirement for you package: see the `conda.recipe/meta.yaml` file in this example.
-
-
