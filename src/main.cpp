@@ -116,6 +116,8 @@ namespace grid_map_raycasting
                     continue;
                 }
 
+                elevation_map(i, j) = grid_map(i, j);
+
                 Eigen::Vector3d grid_cell_pos = {grid_cell_x, grid_cell_y, grid_cell_z};
 
                 Eigen::Vector3d direction = grid_cell_pos - vantage_point;
@@ -135,6 +137,7 @@ namespace grid_map_raycasting
                     if ((i == raycast_u && j == raycast_v))
                     {
                         // std::cout << "break because we reached grid_cell for i=" << i << ", j=" << j << std::endl;
+                        // elevation_map(raycast_u, raycast_v) = grid_map(raycast_u, raycast_v);
                         break;
                     }
 
