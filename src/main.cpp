@@ -17,7 +17,7 @@ namespace Eigen
 namespace grid_map_raycasting
 {
     Eigen::MatrixXd createElevationMap(
-        const geometry::PointCloud& pcd, 
+        const Eigen::Vector3d points, 
         float voxel_size, 
         int width, 
         int height, 
@@ -30,13 +30,13 @@ namespace grid_map_raycasting
         Eigen::Vector3f max_bound(origin[0] + half_width, origin[1] + half_height, std::numeric_limits<float>::infinity());
 
         // Crop the point cloud to the specified bounds
-        auto bbox = geometry::AxisAlignedBoundingBox(min_bound, max_bound);
-        auto cropped_pcd = pcd.Crop(bbox);
+        // auto bbox = geometry::AxisAlignedBoundingBox(min_bound, max_bound);
+        // auto cropped_pcd = pcd.Crop(bbox);
 
         // Create the elevation map
         Eigen::MatrixXd elevation_map = Eigen::MatrixXd::Constant(width, height, std::numeric_limits<float>::quiet_NaN());
         
-        for (const auto& point : cropped_pcd->points_) {
+        for (const auto& point : points) {
             float x = point(0);
             float y = point(1);
             float z = point(2);
