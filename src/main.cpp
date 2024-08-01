@@ -26,15 +26,15 @@ namespace grid_map_raycasting
         // Calculate the bounds of the area we want to include
         float half_width = (width * voxel_size) / 2;
         float half_height = (height * voxel_size) / 2;
-        Vector3f min_bound(origin[0] - half_width, origin[1] - half_height, -numeric_limits<float>::infinity());
-        Vector3f max_bound(origin[0] + half_width, origin[1] + half_height, numeric_limits<float>::infinity());
+        Vector3f min_bound(origin[0] - half_width, origin[1] - half_height, -std::numeric_limits<float>::infinity());
+        Vector3f max_bound(origin[0] + half_width, origin[1] + half_height, std::numeric_limits<float>::infinity());
 
         // Crop the point cloud to the specified bounds
         auto bbox = geometry::AxisAlignedBoundingBox(min_bound, max_bound);
         auto cropped_pcd = pcd.Crop(bbox);
 
         // Create the elevation map
-        MatrixXd elevation_map = MatrixXf::Constant(width, height, numeric_limits<float>::quiet_NaN());
+        MatrixXd elevation_map = MatrixXf::Constant(width, height, std::numeric_limits<float>::quiet_NaN());
         
         for (const auto& point : cropped_pcd->points_) {
             float x = point(0);
@@ -43,10 +43,10 @@ namespace grid_map_raycasting
             int x_idx = static_cast<int>((x - origin[0]) / voxel_size + width / 2);
             int y_idx = static_cast<int>((y - origin[1]) / voxel_size + height / 2);
             if (0 <= x_idx && x_idx < width && 0 <= y_idx && y_idx < height) {
-                if (isnan(elevation_map(x_idx, y_idx))) {
+                if (std::isnan(elevation_map(x_idx, y_idx))) {
                     elevation_map(x_idx, y_idx) = z;
                 } else {
-                    elevation_map(x_idx, y_idx) = max(elevation_map(x_idx, y_idx), z);
+                    elevation_map(x_idx, y_idx) = std::max(elevation_map(x_idx, y_idx), z);
                 }
             }
         }
