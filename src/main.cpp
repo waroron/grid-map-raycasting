@@ -21,20 +21,20 @@ namespace grid_map_raycasting
         float voxel_size, 
         int width, 
         int height, 
-        const Vector2f& origin = Vector2f(0.0, 0.0))
+        const Eigen::Vector2f& origin = Eigen::Vector2f(0.0, 0.0))
     {
         // Calculate the bounds of the area we want to include
         float half_width = (width * voxel_size) / 2;
         float half_height = (height * voxel_size) / 2;
-        Vector3f min_bound(origin[0] - half_width, origin[1] - half_height, -std::numeric_limits<float>::infinity());
-        Vector3f max_bound(origin[0] + half_width, origin[1] + half_height, std::numeric_limits<float>::infinity());
+        Eigen::Vector3f min_bound(origin[0] - half_width, origin[1] - half_height, -std::numeric_limits<float>::infinity());
+        Eigen::Vector3f max_bound(origin[0] + half_width, origin[1] + half_height, std::numeric_limits<float>::infinity());
 
         // Crop the point cloud to the specified bounds
         auto bbox = geometry::AxisAlignedBoundingBox(min_bound, max_bound);
         auto cropped_pcd = pcd.Crop(bbox);
 
         // Create the elevation map
-        MatrixXd elevation_map = MatrixXf::Constant(width, height, std::numeric_limits<float>::quiet_NaN());
+        Eigen::MatrixXd elevation_map = Eigen::MatrixXf::Constant(width, height, std::numeric_limits<float>::quiet_NaN());
         
         for (const auto& point : cropped_pcd->points_) {
             float x = point(0);
