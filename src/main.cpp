@@ -16,6 +16,44 @@ namespace Eigen
 
 namespace grid_map_raycasting
 {
+    Eigen::MatrixXd createElevationMap(
+        const geometry::PointCloud& pcd, 
+        float voxel_size, 
+        int width, 
+        int height, 
+        const Vector2f& origin = Vector2f(0.0, 0.0))
+    {
+        // Calculate the bounds of the area we want to include
+        float half_width = (width * voxel_size) / 2;
+        float half_height = (height * voxel_size) / 2;
+        Vector3f min_bound(origin[0] - half_width, origin[1] - half_height, -numeric_limits<float>::infinity());
+        Vector3f max_bound(origin[0] + half_width, origin[1] + half_height, numeric_limits<float>::infinity());
+
+        // Crop the point cloud to the specified bounds
+        auto bbox = geometry::AxisAlignedBoundingBox(min_bound, max_bound);
+        auto cropped_pcd = pcd.Crop(bbox);
+
+        // Create the elevation map
+        MatrixXd elevation_map = MatrixXf::Constant(width, height, numeric_limits<float>::quiet_NaN());
+        
+        for (const auto& point : cropped_pcd->points_) {
+            float x = point(0);
+            float y = point(1);
+            float z = point(2);
+            int x_idx = static_cast<int>((x - origin[0]) / voxel_size + width / 2);
+            int y_idx = static_cast<int>((y - origin[1]) / voxel_size + height / 2);
+            if (0 <= x_idx && x_idx < width && 0 <= y_idx && y_idx < height) {
+                if (isnan(elevation_map(x_idx, y_idx))) {
+                    elevation_map(x_idx, y_idx) = z;
+                } else {
+                    elevation_map(x_idx, y_idx) = max(elevation_map(x_idx, y_idx), z);
+                }
+            }
+        }
+
+        return elevation_map;
+    }
+
     Eigen::MatrixXb rayCastGridMap(Eigen::Vector3d vantage_point, Eigen::MatrixXd grid_map, Eigen::Vector2d grid_resolution)
     {
         // the vantage point needs to lie within grid
@@ -184,6 +222,11 @@ PYBIND11_MODULE(grid_map_raycasting, m)
         .. autosummary::
            :toctree: _generate
     )pbdoc";
+
+    m.def("createElevationMap", &grid_map_raycasting::createElevationMap, R"pbdoc(
+        Create a elevation map from a point cloud.
+    )pbdoc",
+          py::arg("pcd"), py::arg("voxel_size"), py::arg("width"), py::arg("height"), py::arg("origin"));
 
     m.def("rayCastGridMap", &grid_map_raycasting::rayCastGridMap, R"pbdoc(
         Raycast every cell on the grid from a constant origin of the ray.
