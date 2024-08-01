@@ -34,7 +34,7 @@ namespace grid_map_raycasting
         auto cropped_pcd = pcd.Crop(bbox);
 
         // Create the elevation map
-        Eigen::MatrixXd elevation_map = Eigen::MatrixXf::Constant(width, height, std::numeric_limits<float>::quiet_NaN());
+        Eigen::MatrixXd elevation_map = Eigen::MatrixXd::Constant(width, height, std::numeric_limits<float>::quiet_NaN());
         
         for (const auto& point : cropped_pcd->points_) {
             float x = point(0);
