@@ -3,6 +3,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/eigen.h>
 #include <pybind11/stl.h>
+#include <vector>
 
 #define STRINGIFY(x) #x
 #define MACRO_STRINGIFY(x) STRINGIFY(x)
@@ -17,7 +18,7 @@ namespace Eigen
 namespace grid_map_raycasting
 {
     Eigen::MatrixXd createElevationMap(
-        const Eigen::Vector3d points, 
+        const std::vector<Eigen::Vector3d>& points, 
         float voxel_size, 
         int width, 
         int height, 
@@ -37,9 +38,9 @@ namespace grid_map_raycasting
         Eigen::MatrixXd elevation_map = Eigen::MatrixXd::Constant(width, height, std::numeric_limits<float>::quiet_NaN());
         
         for (const auto& point : points) {
-            float x = point(0);
-            float y = point(1);
-            float z = point(2);
+            auto x = point(0);
+            auto y = point(1);
+            auto z = point(2);
             int x_idx = static_cast<int>((x - origin[0]) / voxel_size + width / 2);
             int y_idx = static_cast<int>((y - origin[1]) / voxel_size + height / 2);
             if (0 <= x_idx && x_idx < width && 0 <= y_idx && y_idx < height) {
@@ -226,7 +227,7 @@ PYBIND11_MODULE(grid_map_raycasting, m)
     m.def("createElevationMap", &grid_map_raycasting::createElevationMap, R"pbdoc(
         Create a elevation map from a point cloud.
     )pbdoc",
-          py::arg("pcd"), py::arg("voxel_size"), py::arg("width"), py::arg("height"), py::arg("origin"));
+          py::arg("points"), py::arg("voxel_size"), py::arg("width"), py::arg("height"), py::arg("origin"));
 
     m.def("rayCastGridMap", &grid_map_raycasting::rayCastGridMap, R"pbdoc(
         Raycast every cell on the grid from a constant origin of the ray.
